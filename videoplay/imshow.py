@@ -17,9 +17,9 @@ def print_img(img):
 @click.option("--file", type=str, required=True, help='image file name')
 @click.option("--lines", type=int,default=27, help='console lines')
 @click.option("--columns", type=int, default=120, help='console columns')
-def _imread(file:str, lines:int, columns:int):
+def _imshow(file:str, lines:int, columns:int):
     img = get_img(file, lines, columns)
     print_img(img)
 
 if __name__ == "__main__":
-    _imread()
+    _imshow()
