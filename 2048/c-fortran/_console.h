@@ -35,7 +35,7 @@ extern "C" {
 void set_cursor_potition(int x, int y)
 {
 #ifdef _WIN32
-    COORD pos = {x, y};
+    COORD pos = {(short)x, (short)y};
     SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE),pos);
 #elif __linux__
     printf("\033[%d;%dH", y+1, x+1);
