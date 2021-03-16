@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <script>
+    var Direction;
+    (function (Direction) {
+      Direction[Direction["Up"] = 0] = "Up";
+      Direction[Direction["Down"] = 1] = "Down";
+      Direction[Direction["Left"] = 2] = "Left";
+      Direction[Direction["Right"] = 3] = "Right";
+    })(Direction || (Direction = {}));
+    ;
+    var basic_2048 = /** @class */ (function () {
+      // 初始化
+      function basic_2048() {
+        // 私有变量,储存状态
+        this.is_end = false;
+        this.status = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+        this.colormap = {
+          "0": "#f0f0f0",
+          "2": "#bfbfff",
+          "4": "#7f7fff",
+          "8": "#7f7fbf",
+          "16": "#3f3f7f",
+          "32": "#3f7f3f",
+          "64": "#7f7f3f",
+          "128": "#bf7f7f",
+          "256": "#bfbf7f",
+          "512": "#ffbf7f",
+          "1024": "#ff7f7f",
+          "2048": "#ff0000"
+        };
+        this.init();
+      }
+      basic_2048.prototype.init = function () {
+        this.is_end = false;
+        for (var i = 0; i < 16; ++i)
+          this.status[i] = 0;
+        this.status[Math.floor(Math.random() * 16)] = 2;
+        this.print_frame();
+      };
+      basic_2048.prototype.print_frame = function () {
+        for (var i = 0; i < 16; ++i) {
+          var td = document.getElementById((i + 1).toString());
+          var num = this.status[i];
+          if (num != 0) td.innerHTML = num;
+          else td.innerHTML = "";
+          td.bgColor = this.colormap[num.toString()];
+        }
+      };
+      basic_2048.prototype.change_status = function (_direct) {
+        switch (_direct) {
+          case Direction.Up:
+            {
+              for (var j = 0; j < 4; ++j) {
+                var change = [0, 0, 0, 0];
+                var read_idx = 0;
+                var write_idx = 0;
+                for (var i = 0; i < 4; ++i)
+                  if (this.status[i * 4 + j])
+                    change[read_idx++] = this.status[i * 4 + j];
+                for (var i = read_idx; i < 4; ++i)
+                  change[i] = 0;
+                for (var i = 0; i < read_idx;) {
+                  if (i < 3 && change[i] == change[i + 1]) {
+                    this.status[(write_idx++) * 4 + j] = change[i] << 1;
+                    i += 2;
+                  }
+                  else {
+                    this.status[(write_idx++) * 4 + j] = change[i++];
+                  }
+                }
+                for (var i = write_idx; i < 4; ++i)
+                  this.status[i * 4 + j] = 0;
+              }
+              break;
+            }
+          case Direction.Down:
+            {
+              for (var j = 0; j < 4; ++j) {
+                var change = [0, 0, 0, 0];
+                var read_idx = 0;
+                var write_idx = 3;
+                for (var i = 3; i >= 0; --i)
+                  if (this.status[i * 4 + j])
+                    change[read_idx++] = this.status[i * 4 + j];
+                for (var i = read_idx; i < 4; ++i)
+                  change[i] = 0;
+                for (var i = 0; i < read_idx;) {
+                  if (i < 3 && change[i] == change[i + 1]) {
+                    this.status[(write_idx--) * 4 + j] = change[i] << 1;
+                    i += 2;
+                  }
+                  else {
+                    this.status[(write_idx--) * 4 + j] = change[i++];
+                  }
+                }
+                for (var i = write_idx; i >= 0; --i)
+                  this.status[i * 4 + j] = 0;
+              }
+              break;
+            }
+          case Direction.Left:
+            {
+              for (var i = 0; i < 4; ++i) {
+                var change = [0, 0, 0, 0];
+                var read_idx = 0;
+                var write_idx = 0;
+                for (var j = 0; j < 4; ++j)
+                  if (this.status[i * 4 + j])
+                    change[read_idx++] = this.status[i * 4 + j];
+                for (var j = read_idx; j < 4; ++j)
+                  change[j] = 0;
+                for (var j = 0; j < read_idx;) {
+                  if (j < 3 && change[j] == change[j + 1]) {
+                    this.status[i * 4 + (write_idx++)] = change[j] << 1;
+                    j += 2;
+                  }
+                  else {
+                    this.status[i * 4 + (write_idx++)] = change[j++];
+                  }
+                }
+                for (var j = write_idx; j < 4; ++j)
+                  this.status[i * 4 + j] = 0;
+              }
+              break;
+            }
+          case Direction.Right:
+            {
+              for (var i = 0; i < 4; ++i) {
+                var change = [0, 0, 0, 0];
+                var read_idx = 0;
+                var write_idx = 3;
+                for (var j = 3; j >= 0; --j)
+                  if (this.status[i * 4 + j])
+                    change[read_idx++] = this.status[i * 4 + j];
+                for (var j = read_idx; j < 4; ++j)
+                  change[j] = 0;
+                for (var j = 0; j < read_idx;) {
+                  if (j < 3 && change[j] == change[j + 1]) {
+                    this.status[i * 4 + (write_idx--)] = change[j] << 1;
+                    j += 2;
+                  }
+                  else {
+                    this.status[i * 4 + (write_idx--)] = change[j++];
+                  }
+                }
+                for (var j = write_idx; j >= 0; --j)
+                  this.status[i * 4 + j] = 0;
+              }
+              break;
+            }
+          default: break;
+        }
+      };
+      basic_2048.prototype.get_pos = function (_i, _j) {
+        if (_i >= 0 && _i < 4 && _j >= 0 && _j < 4)
+          return this.status[_i * 4 + _j];
+        else
+          return 0;
+      };
+      basic_2048.prototype.add_new = function () {
+        var zero_counts = 0;
+        for (var i = 0; i < 16; ++i)
+          zero_counts += Number(this.status[i] == 0);
+        if (zero_counts == 0)
+          return;
+        var rand_num = Math.floor(Math.random() * zero_counts);
+        for (var i = 0; i < 16; ++i) {
+          zero_counts -= Number(this.status[i] == 0);
+          if (zero_counts == rand_num) {
+            var max_num = this.status[0];
+            for (var j = 0; j < 16; ++j)
+              max_num = (max_num > this.status[j]) ? max_num : this.status[j];
+            switch (max_num) {
+              case 64:
+                this.status[i] = (Math.floor(Math.random() * 8) > 0) ? 2 : 4;
+                break;
+              case 128:
+                this.status[i] = (Math.floor(Math.random() * 5) > 0) ? 2 : 4;
+                break;
+              case 256:
+                this.status[i] = (Math.floor(Math.random() * 3) > 0) ? 2 : 4;
+                break;
+              case 512:
+                this.status[i] = (Math.floor(Math.random() * 2) > 0) ? 2 : 4;
+                break;
+              case 1024:
+                this.status[i] = (Math.floor(Math.random() * 3) > 1) ? 2 : 4;
+                break;
+              default:
+                this.status[i] = 2;
+                break;
+            }
+            break;
+          }
+        }
+      };
+      basic_2048.prototype.check_status = function () {
+        for (var i = 0; i < 16; ++i)
+          if (this.status[i] == 2048)
+            return 1;
+        for (var i = 0; i < 16; ++i)
+          if (this.status[i] == 0)
+            return 0;
+        for (var i = 0; i < 4; ++i) {
+          if (this.status[i * 4] == this.status[i * 4 + 1] || this.status[i * 4 + 1] == this.status[i * 4 + 2] || this.status[i * 4 + 2] == this.status[i * 4 + 3])
+            return 0;
+        }
+        for (var j = 0; j < 4; ++j) {
+          if (this.status[j] == this.status[4 + j] || this.status[4 + j] == this.status[8 + j] || this.status[8 + j] == this.status[12 + j])
+            return 0;
+        }
+        return -1;
+      };
+      basic_2048.prototype.on = function (_direct) {
+        if (this.is_end) return;
+        switch (_direct) {
+          case 'Up':
+          case 'up':
+            this.change_status(Direction.Up);
+            break;
+          case 'Down':
+          case 'down':
+            this.change_status(Direction.Down);
+            break;
+          case 'Left':
+          case 'left':
+            this.change_status(Direction.Left);
+            break;
+          case 'Right':
+          case 'right':
+            this.change_status(Direction.Right);
+            break;
+          default: break;
+        }
+        switch (this.check_status()) {
+          case 0: break;
+          case 1:
+            this.print_frame();
+            alert("You win!!!");
+            this.is_end = true;
+            return;
+          case -1:
+            this.print_frame();
+            alert("You fail!!!");
+            this.is_end = true;
+            return;
+          default: break;
+        }
+        this.add_new();
+        this.print_frame();
+      };
+      return basic_2048;
+    }());
+    ;
+
+  </script>
+  <style>
+    td.gameitem {
+      width: 50pt;
+      height: 50pt;
+      background-size: 50pt 50pt;
+      font-size: 20pt;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <div style="width: 200pt; margin: auto;">
+    <table id="gameframe" style="border: 0pt; margin: 0%;">
+      <tr>
+        <td class="gameitem" id="1"></td>
+        <td class="gameitem" id="2"></td>
+        <td class="gameitem" id="3"></td>
+        <td class="gameitem" id="4"></td>
+      </tr>
+      <tr>
+        <td class="gameitem" id="5"></td>
+        <td class="gameitem" id="6"></td>
+        <td class="gameitem" id="7"></td>
+        <td class="gameitem" id="8"></td>
+      </tr>
+      <tr>
+        <td class="gameitem" id="9"></td>
+        <td class="gameitem" id="10"></td>
+        <td class="gameitem" id="11"></td>
+        <td class="gameitem" id="12"></td>
+      </tr>
+      <tr>
+        <td class="gameitem" id="13"></td>
+        <td class="gameitem" id="14"></td>
+        <td class="gameitem" id="15"></td>
+        <td class="gameitem" id="16"></td>
+      </tr>
+    </table>
+    <div id="restart-content" style="width: 200pt; text-align: center; margin-top: 50pt;">
+      <button id="restart" style="width: 100pt; height: 30pt;">重新开始</button>
+    </div>
+    <script>
+      var mygame = new basic_2048();
+      document.getElementById('restart').addEventListener('click', () => { mygame.init() });
+      function game_onkeydown(event) {
+        var e = event || window.event;
+        var k = e.keyCode || e.which;
+        switch (k) {
+          case 37: mygame.on('left'); break;
+          case 38: mygame.on('up'); break;
+          case 39: mygame.on('right'); break;
+          case 40: mygame.on('down'); break;
+        }
+      }
+      document.onkeydown = game_onkeydown;
+    </script>
+  </div>
+</body>
+
+</html>
