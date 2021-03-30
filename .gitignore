@@ -3,3 +3,4 @@ test*
 *.o
 *.mod
 .vscode*
+target*

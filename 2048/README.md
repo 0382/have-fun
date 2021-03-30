@@ -30,3 +30,13 @@ make f2048
 ## javascript版本
 
 一个网页文件，示例见[我的github pages](https://0382.github.io/game/2048.html)，毫无美感的垃圾配色，见谅。
+
+## rust版本
+
+不想搞跨平台了，只支持linux。
+
+使用一下命令编译运行。
+```bash
+cargo build
+cargo run
+```
