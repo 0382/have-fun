@@ -1,6 +1,19 @@
+import numpy as np
 import cv2
-import click
-import time
+import os
+import sys
+
+font_ratio = 2.5
+
+def resize_img(img, lines, columns):
+    x, y, _ = img.shape
+    if y*lines * font_ratio >= x*columns:
+        ty = columns
+        tx = int(np.floor(x*columns / y / font_ratio))
+    else:
+        tx = lines
+        ty = int(np.floor(font_ratio * y*lines / x))
+    return cv2.resize(img, (ty, tx))
 
 def print_img(img):
     print('\033[0;0H',end='')  # 移动光标到控制台开头
@@ -10,11 +23,8 @@ def print_img(img):
             print(f"\033[0;48;2;{r};{g};{b}m ",end='')
         print('\033[0m\n', end='')
 
-@click.command()
-@click.option("--file", type=str, required=True, help='video file name')
-@click.option("--lines", type=int, default=27, help='console lines')
-@click.option("--columns", type=int, default=120, help='console columns')
-def _vdplay(file:str, lines:int, columns:int):
+def videoplay(file:str):
+    columns, lines = os.get_terminal_size()
     cap = cv2.VideoCapture(file)
     success,frame = cap.read()
     i = 0
@@ -23,10 +33,10 @@ def _vdplay(file:str, lines:int, columns:int):
         i = i + 1
         if i%3 == 0:     # 为了速度，删掉一部分帧数
             continue
-        small = cv2.resize(frame, (columns, lines))
+        small = resize_img(frame, lines, columns)
         print_img(small)
         success, frame = cap.read()
     cap.release()
 
 if __name__ == "__main__":
-    _vdplay()
+    videoplay(sys.argv[1])
