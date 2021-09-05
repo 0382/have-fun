@@ -28,7 +28,7 @@ namespace learn_dotnet
             {
                 return;
             }
-            clean_console();
+            Console.Clear();
             print_frame();
             while (step()) ;
         }
@@ -84,7 +84,7 @@ namespace learn_dotnet
 
         private void print_frame()
         {
-            set_cursor_pos(0, 0);
+            Console.SetCursorPosition(0, 0);
             const string line = "-----------------------------";
             Console.WriteLine(line);
             for (int i = 0; i < 4; ++i)
@@ -271,16 +271,6 @@ namespace learn_dotnet
                 }
             }
             return -1;
-        }
-
-        private void clean_console()
-        {
-            Console.Write("\x1b[2J");
-        }
-
-        private void set_cursor_pos(int x, int y)
-        {
-            Console.Write("\x1b[{0};{1}H", y + 1, x + 1);
         }
     }
     class Program
